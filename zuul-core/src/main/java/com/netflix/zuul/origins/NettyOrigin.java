@@ -27,6 +27,7 @@ import com.netflix.zuul.netty.connectionpool.PooledConnection;
 import com.netflix.zuul.niws.RequestAttempt;
 import com.netflix.zuul.passport.CurrentPassport;
 import com.netflix.zuul.stats.Timing;
+import io.netty.channel.ChannelFactory;
 import io.netty.channel.EventLoop;
 import io.netty.util.concurrent.Promise;
 
@@ -40,10 +41,26 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public interface NettyOrigin extends InstrumentedOrigin {
 
-    Promise<PooledConnection> connectToOrigin(final HttpRequestMessage zuulReq, EventLoop eventLoop,
+    /**
+     * Use {@link #connectToOrigin(HttpRequestMessage, EventLoop, ChannelFactory, int, CurrentPassport, AtomicReference,
+     * AtomicReference)} instead.  Zuul will not call this method.  Users are expected to implement one of the
+     * {@code connectToOrigin} methods.
+     */
+    @Deprecated
+    default Promise<PooledConnection> connectToOrigin(final HttpRequestMessage zuulReq, EventLoop eventLoop,
                                               int attemptNumber, CurrentPassport passport,
                                               AtomicReference<Server> chosenServer,
-                                              AtomicReference<String> chosenHostAddr);
+                                              AtomicReference<String> chosenHostAddr) {
+        throw new UnsupportedOperationException("unimplemented");
+    }
+
+    default Promise<PooledConnection> connectToOrigin(
+            final HttpRequestMessage zuulReq, EventLoop eventLoop, ChannelFactory<?> channelFactory, int attemptNumber,
+            CurrentPassport passport, AtomicReference<Server> chosenServer, AtomicReference<String> chosenHostAddr) {
+        // TODO(carl-mastrangelo): The generics on this method should be ? super String and so on.
+        return connectToOrigin(
+                zuulReq, eventLoop, attemptNumber, passport, chosenServer, chosenHostAddr);
+    }
 
     Timing getProxyTiming(HttpRequestMessage zuulReq);
 

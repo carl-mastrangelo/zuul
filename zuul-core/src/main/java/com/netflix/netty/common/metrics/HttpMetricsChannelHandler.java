@@ -54,7 +54,7 @@ public class HttpMetricsChannelHandler extends ChannelInboundHandlerAdapter
         this.registry = registry;
 
         this.currentRequestsGauge = this.registry.gauge(this.registry.createId(name + ".http.requests.current", "id", id));
-        this.unSupportedPipeliningCounter = this.registry.counter(name + ".http.requests.pipelining.dropped", "id", id);
+        this.unSupportedPipeliningCounter = this.registry.counter(name + ".http.requests.pipelining.dropped", "id", id, "#dsf");
     }
 
     public static int getInflightRequestCountFromChannel(Channel ch)

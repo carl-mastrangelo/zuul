@@ -30,6 +30,7 @@ import com.netflix.zuul.netty.insights.PassportStateHttpClientHandler;
 import com.netflix.zuul.netty.server.OriginResponseReceiver;
 import com.netflix.zuul.passport.CurrentPassport;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFactory;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoop;
@@ -317,8 +318,16 @@ public class DefaultClientChannelManager implements ClientChannelManager {
     public Promise<PooledConnection> acquire(final EventLoop eventLoop, final Object key, final String httpMethod,
                                              final String uri, final int attemptNum, final CurrentPassport passport,
                                              final AtomicReference<Server> selectedServer,
-                                             final AtomicReference<String> selectedHostAdddr)
-    {
+                                             final AtomicReference<String> selectedHostAdddr) {
+        return null;
+
+    }
+
+    @Override
+    public Promise<PooledConnection> acquire(
+            final EventLoop eventLoop, final ChannelFactory<?> channelFactory, final Object key,
+            final String httpMethod, final String uri, final int attemptNum, final CurrentPassport passport,
+            final AtomicReference<Server> selectedServer, final AtomicReference<String> selectedHostAdddr) {
 
         if (attemptNum < 1) {
             throw new IllegalArgumentException("attemptNum must be greater than zero");

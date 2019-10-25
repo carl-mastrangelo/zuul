@@ -71,6 +71,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
+import io.netty.channel.ReflectiveChannelFactory;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.DefaultLastHttpContent;
 import io.netty.handler.codec.http.HttpContent;
@@ -387,8 +388,11 @@ public class ProxyEndpoint extends SyncZuulFilterAdapter<HttpRequestMessage, Htt
             // update RPS trackers
             updateOriginRpsTrackers(origin, attemptNum);
 
+            Channel inboundChannel = channelCtx.channel();
             // We pass this AtomicReference<Server> here and the origin impl will assign the chosen server to it.
-            promise = origin.connectToOrigin(zuulRequest, channelCtx.channel().eventLoop(), attemptNum, passport, chosenServer, chosenHostAddr);
+            promise = origin.connectToOrigin(
+                    zuulRequest, inboundChannel.eventLoop(), new ReflectiveChannelFactory<>(inboundChannel.getClass()),
+                    attemptNum, passport, chosenServer, chosenHostAddr);
 
             storeAndLogOriginRequestInfo();
             currentRequestAttempt = origin.newRequestAttempt(chosenServer.get(), context, attemptNum);

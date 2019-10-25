@@ -19,6 +19,7 @@ package com.netflix.zuul.netty.connectionpool;
 
 import com.netflix.loadbalancer.Server;
 import com.netflix.zuul.passport.CurrentPassport;
+import io.netty.channel.ChannelFactory;
 import io.netty.channel.EventLoop;
 import io.netty.util.concurrent.Promise;
 
@@ -43,9 +44,20 @@ public interface ClientChannelManager
 
     Promise<PooledConnection> acquire(EventLoop eventLoop);
 
-    Promise<PooledConnection> acquire(EventLoop eventLoop, Object key, String httpMethod, String uri, int retryNum,
+    @Deprecated
+    default Promise<PooledConnection> acquire(EventLoop eventLoop, Object key, String httpMethod, String uri, int retryNum,
                                       CurrentPassport passport, AtomicReference<Server> selectedServer,
-                                      AtomicReference<String> selectedHostAddr);
+                                      AtomicReference<String> selectedHostAddr) {
+        throw new UnsupportedOperationException("unimplemented");
+    }
+
+    default Promise<PooledConnection> acquire(
+            EventLoop eventLoop, ChannelFactory<?> channelFactory, Object key, String httpMethod, String uri,
+            int retryNum, CurrentPassport passport, AtomicReference<Server> selectedServer,
+            AtomicReference<String> selectedHostAddr) {
+        // TODO(carl-mastrangelo): The generics on this method should be ? super String and so on.
+        return acquire(eventLoop, key, httpMethod, uri, retryNum, passport, selectedServer, selectedHostAddr);
+    }
 
     boolean isCold();
 

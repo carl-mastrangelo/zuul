@@ -41,6 +41,7 @@ import com.netflix.zuul.passport.CurrentPassport;
 import com.netflix.zuul.stats.Timing;
 import com.netflix.zuul.stats.status.StatusCategory;
 import com.netflix.zuul.stats.status.StatusCategoryUtils;
+import io.netty.channel.ChannelFactory;
 import io.netty.channel.EventLoop;
 import io.netty.util.concurrent.Promise;
 import org.apache.commons.lang3.StringUtils;
@@ -121,6 +122,15 @@ public class BasicNettyOrigin implements NettyOrigin {
                                                      CurrentPassport passport, AtomicReference<Server> chosenServer,
                                                      AtomicReference<String> chosenHostAddr) {
         return clientChannelManager.acquire(eventLoop, null, zuulReq.getMethod().toUpperCase(),
+                zuulReq.getPath(), attemptNumber, passport, chosenServer, chosenHostAddr);
+    }
+
+    @Override
+    public Promise<PooledConnection> connectToOrigin(
+            HttpRequestMessage zuulReq, EventLoop eventLoop, ChannelFactory<?> channelFactory, int attemptNumber,
+            CurrentPassport passport, AtomicReference<Server> chosenServer,
+            AtomicReference<String> chosenHostAddr) {
+        return clientChannelManager.acquire(eventLoop, channelFactory, null, zuulReq.getMethod().toUpperCase(),
                 zuulReq.getPath(), attemptNumber, passport, chosenServer, chosenHostAddr);
     }
 
