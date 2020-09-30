@@ -20,7 +20,7 @@ dependencies {
     api "com.netflix.ribbon:ribbon-eureka:${versions_ribbon}"
     api "com.netflix.ribbon:ribbon-archaius:${versions_ribbon}"
     // TODO(carl-mastrangelo): this is not actually needed, but it is pulling in API deps.  Remove it.
-    api "com.netflix.eureka:eureka-client:1.9.18"
+    api "com.netflix.eureka:eureka-client:1.10.4"
     api "io.reactivex:rxjava:1.2.1"
 
     // TODO(carl-mastrangelo): some of these could probably be implementation.   Do a deeper check.
